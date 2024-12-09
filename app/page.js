@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { jsPDF } from 'jspdf';
 import * as axe from 'axe-core';
 
 export default function HomePage() {
@@ -43,6 +44,36 @@ export default function HomePage() {
     }
   };
 
+  const exportToPDF = () => {
+    if (!results || results.length === 0) return;
+  
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text('Web Accessibility Analyzer Results', 10, 10);
+  
+    let yPosition = 20; // Start below the title
+    results.forEach((issue, index) => {
+      if (yPosition > 270) {
+        doc.addPage(); // Add a new page if content exceeds the page height
+        yPosition = 20; // Reset y position
+      }
+  
+      doc.setFontSize(14);
+      doc.text(`${index + 1}. ${issue.help}`, 10, yPosition);
+      yPosition += 10;
+  
+      doc.setFontSize(12);
+      doc.text(`Description: ${issue.description}`, 10, yPosition);
+      yPosition += 10;
+  
+      doc.text(`Impact: ${issue.impact}`, 10, yPosition);
+      yPosition += 15; // Add more space between issues
+    });
+  
+    doc.save('accessibility-report.pdf');
+  };
+  
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Web Accessibility Analyzer</h1>
@@ -67,18 +98,28 @@ export default function HomePage() {
         <h2 className="text-xl font-semibold text-gray-800">Results</h2>
         {error && <p className="text-red-500">{error}</p>}
         {!results && !error && <p className="text-gray-600">Scan results will appear here.</p>}
-        {results && (
-          <ul className="list-disc list-inside text-gray-800">
-            {results.map((issue, index) => (
-              <li key={index}>
-                <strong>{issue.help}</strong>: {issue.description}
-                <br />
-                <small>Impact: {issue.impact}</small>
-              </li>
-            ))}
-          </ul>
+        {results && results.length > 0 && (
+          <>
+            <ul className="list-disc list-inside text-gray-800">
+              {results.map((issue, index) => (
+                <li key={index} className="mb-4">
+                  <strong>{issue.help}</strong>: {issue.description}
+                  <br />
+                  <small>Impact: {issue.impact}</small>
+                </li>
+              ))}
+            </ul>
+            {/* Export Button */}
+            <button
+              onClick={exportToPDF}
+              className="mt-4 bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition"
+            >
+              Export to PDF
+            </button>
+          </>
         )}
       </div>
+
     </div>
   );
 }
