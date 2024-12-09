@@ -67,7 +67,7 @@ export default function HomePage() {
       yPosition += 10;
   
       doc.text(`Impact: ${issue.impact}`, 10, yPosition);
-      yPosition += 15; // Add more space between issues
+      yPosition += 15; 
     });
   
     doc.save('accessibility-report.pdf');
@@ -76,7 +76,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Web Accessibility Analyzer</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">Web Light: Accessibility Analyzer</h1>
       <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
         <form className="flex flex-col gap-4" onSubmit={handleScan}>
           <input
